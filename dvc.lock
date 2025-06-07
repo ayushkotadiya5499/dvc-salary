@@ -1,0 +1,84 @@
+schema: '2.0'
+stages:
+  data_ingestion:
+    cmd: python src/data_ingestion.py
+    deps:
+    - path: src/data_ingestion.py
+      hash: md5
+      md5: 4419cf2bfcb3c66389875d6bff999b80
+      size: 1220
+    params:
+      params.yaml:
+        data.raw_path: data/raw
+        data.source_path: data/salary_dataset.csv
+        split.random_state: 42
+        split.test_size: 0.2
+    outs:
+    - path: data/raw
+      hash: md5
+      md5: a2a7b84d67d57fd321e19afd717a175c.dir
+      size: 22835
+      nfiles: 2
+  data_preprocessing:
+    cmd: python src/data_preprocessing.py
+    deps:
+    - path: data/raw/train.csv
+      hash: md5
+      md5: a4f43529536a862fc10ef875c06ed16f
+      size: 18243
+    - path: src/data_preprocessing.py
+      hash: md5
+      md5: b3ec87e5872f4c6e65d7a4ed9e7ff3e4
+      size: 2648
+    params:
+      params.yaml:
+        data.target: salary
+        data.train_path: data/raw/train.csv
+        features.cat_cols:
+        - job_role
+        - education_level
+        - location
+        features.num_cols:
+        - experience
+        - age
+        - projects_completed
+        - hours_per_week
+        model.max_depth: 10
+        model.min_samples_leaf: 3
+        model.min_samples_split: 5
+        model.n_estimators: 100
+        model.n_jobs: -1
+        model.output_path: models/model.pkl
+        split.random_state: 42
+        split.test_size: 0.2
+    outs:
+    - path: models/model.pkl
+      hash: md5
+      md5: 69845e19019e9fe258728ed21e4dca7f
+      size: 826048
+  testing:
+    cmd: python src/testing.py
+    deps:
+    - path: data/raw/test.csv
+      hash: md5
+      md5: 230851d244d62bc1b3680fb13eebd696
+      size: 4592
+    - path: models/model.pkl
+      hash: md5
+      md5: 69845e19019e9fe258728ed21e4dca7f
+      size: 826048
+    - path: src/testing.py
+      hash: md5
+      md5: 8008be385d1d2877b6e12c8271c912d7
+      size: 1436
+    params:
+      params.yaml:
+        data.target: salary
+        data.test_path: data/raw/test.csv
+        evaluation.metrics_output: metrics.json
+        model.output_path: models/model.pkl
+    outs:
+    - path: metrics.json
+      hash: md5
+      md5: 4eef163f1bcb324d1bbf87d3bbddc11d
+      size: 95

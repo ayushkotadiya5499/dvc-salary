@@ -1,0 +1,47 @@
+stages:
+  data_ingestion:
+    cmd: python src/data_ingestion.py
+    deps:
+      - src/data_ingestion.py
+    params:
+      - data.source_path
+      - data.raw_path
+      - split.test_size
+      - split.random_state
+    outs:
+      - data/raw
+
+  data_preprocessing:
+    cmd: python src/data_preprocessing.py
+    deps:
+      - src/data_preprocessing.py
+      - data/raw/train.csv
+    params:
+      - model.n_estimators
+      - model.max_depth
+      - model.min_samples_split
+      - model.min_samples_leaf
+      - model.n_jobs
+      - split.test_size
+      - split.random_state
+      - features.num_cols
+      - features.cat_cols
+      - data.train_path
+      - data.target
+      - model.output_path
+    outs:
+      - models/model.pkl
+
+  testing:
+    cmd: python src/testing.py
+    deps:
+      - src/testing.py
+      - models/model.pkl
+      - data/raw/test.csv
+    params:
+      - data.test_path
+      - data.target
+      - model.output_path
+      - evaluation.metrics_output
+    outs:
+      - metrics.json
