@@ -11,12 +11,12 @@ stages:
       params.yaml:
         data.raw_path: data/raw
         data.source_path: data/salary_dataset.csv
-        split.random_state: 42
-        split.test_size: 0.2
+        split.random_state: 32
+        split.test_size: 0.1
     outs:
     - path: data/raw
       hash: md5
-      md5: a2a7b84d67d57fd321e19afd717a175c.dir
+      md5: efc3b28a36c148912373096e2b6c2202.dir
       size: 22835
       nfiles: 2
   data_preprocessing:
@@ -24,8 +24,8 @@ stages:
     deps:
     - path: data/raw/train.csv
       hash: md5
-      md5: a4f43529536a862fc10ef875c06ed16f
-      size: 18243
+      md5: 1383af9fc1ead7a6ace4092ac8929025
+      size: 20509
     - path: src/data_preprocessing.py
       hash: md5
       md5: b3ec87e5872f4c6e65d7a4ed9e7ff3e4
@@ -43,30 +43,30 @@ stages:
         - age
         - projects_completed
         - hours_per_week
-        model.max_depth: 10
-        model.min_samples_leaf: 3
-        model.min_samples_split: 5
-        model.n_estimators: 100
+        model.max_depth: 3
+        model.min_samples_leaf: 1
+        model.min_samples_split: 2
+        model.n_estimators: 250
         model.n_jobs: -1
         model.output_path: models/model.pkl
-        split.random_state: 42
-        split.test_size: 0.2
+        split.random_state: 32
+        split.test_size: 0.1
     outs:
     - path: models/model.pkl
       hash: md5
-      md5: 69845e19019e9fe258728ed21e4dca7f
-      size: 826048
+      md5: ea92c0c39c0a2e3708ae163506a1f59b
+      size: 353008
   testing:
     cmd: python src/testing.py
     deps:
     - path: data/raw/test.csv
       hash: md5
-      md5: 230851d244d62bc1b3680fb13eebd696
-      size: 4592
+      md5: e223bf793ecbdfafc6ef6954a37a84d9
+      size: 2326
     - path: models/model.pkl
       hash: md5
-      md5: 69845e19019e9fe258728ed21e4dca7f
-      size: 826048
+      md5: ea92c0c39c0a2e3708ae163506a1f59b
+      size: 353008
     - path: src/testing.py
       hash: md5
       md5: 8008be385d1d2877b6e12c8271c912d7
@@ -80,5 +80,5 @@ stages:
     outs:
     - path: metrics.json
       hash: md5
-      md5: 4eef163f1bcb324d1bbf87d3bbddc11d
+      md5: 4848bf8fd1c27850463a8fd47f0ccec4
       size: 95
